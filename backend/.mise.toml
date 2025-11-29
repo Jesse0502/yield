@@ -1,0 +1,3 @@
+[tools]
+python = "3.12.2"   # or whatever you tested with locally
+uv = "latest"
