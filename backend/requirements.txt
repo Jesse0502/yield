@@ -1,0 +1,16 @@
+fastapi
+uvicorn[standard]
+python-dotenv
+pydantic-settings
+langchain-xai
+langchain-core
+langchain-google-genai
+langchain-community
+supabase
+pyjwt
+apscheduler
+langchain
+python-multipart
+pypdf
+openpyxl
+pytest
