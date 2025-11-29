@@ -29,10 +29,23 @@ export default function ChatInterface() {
   const fetchingOlderRef = useRef(false)
 
   const [isInitialScrollDone, setIsInitialScrollDone] = useState(false)
+  const messageRefs = useRef<Map<string, HTMLDivElement>>(new Map())
 
   const scrollToBottom = useCallback(() => {
     if (listRef.current) {
       listRef.current.scrollIntoView({ behavior: 'instant', block: 'end' })
+    }
+  }, [])
+
+  const scrollToMessage = useCallback((messageId: string) => {
+    const messageElement = messageRefs.current.get(messageId)
+    if (messageElement && scrollContainerRef.current) {
+      messageElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      // Highlight the message briefly
+      messageElement.classList.add('ring-2', 'ring-[#C586C0]', 'ring-opacity-50')
+      setTimeout(() => {
+        messageElement.classList.remove('ring-2', 'ring-[#C586C0]', 'ring-opacity-50')
+      }, 2000)
     }
   }, [])
 
@@ -119,6 +132,22 @@ export default function ChatInterface() {
     }
   }, [messages, streaming, initialHistoryLoaded, scrollToBottom])
 
+  // Handle scrolling to specific message from URL hash
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    
+    const hash = window.location.hash
+    if (hash && hash.startsWith('#message-')) {
+      const messageId = hash.replace('#message-', '')
+      // Wait for messages to load and then scroll
+      if (initialHistoryLoaded && messages.length > 0) {
+        setTimeout(() => {
+          scrollToMessage(messageId)
+        }, 500)
+      }
+    }
+  }, [initialHistoryLoaded, messages, scrollToMessage])
+
   return (
     <section className="flex flex-col h-full min-h-0 glassmorphic rounded-lg overflow-hidden">
       {error && (
@@ -162,7 +191,18 @@ export default function ChatInterface() {
           {messages.map((message: Message) => {
             const isStreaming = streaming && message.id === currentStreamId
             return (
-              <div key={message.id} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"} gap-3`}>
+              <div 
+                key={message.id} 
+                id={`message-${message.id}`}
+                ref={(el) => {
+                  if (el) {
+                    messageRefs.current.set(message.id, el)
+                  } else {
+                    messageRefs.current.delete(message.id)
+                  }
+                }}
+                className={`flex ${message.role === "user" ? "justify-end" : "justify-start"} gap-3 transition-all`}
+              >
                 {message.role === "ai" && (
                   <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#C586C0] to-cyan-500 flex-shrink-0 flex items-center justify-center relative">
                     {isStreaming ? (

@@ -6,7 +6,7 @@ Initializes FastAPI app with CORS middleware and API routes.
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
-from src.api.routes import chat, notifications, memories, files
+from src.api.routes import chat, notifications, memories, files, search
 from src.core.config import settings
 from src.core.logging import setup_logging, get_logger
 from src.services.scheduler_service import start_scheduler
@@ -52,6 +52,7 @@ app.include_router(chat.router, prefix="/api", tags=["chat"])
 app.include_router(notifications.router, prefix="/api", tags=["notifications"])
 app.include_router(memories.router, prefix="/api", tags=["memories"])
 app.include_router(files.router, prefix="/api", tags=["files"])
+app.include_router(search.router, prefix="/api", tags=["search"])
 
  
 @app.get("/")

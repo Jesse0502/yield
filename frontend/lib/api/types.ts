@@ -59,6 +59,51 @@ export interface FileItem {
   tags: string[]
 }
 
+// Global Search Types
+export interface MemorySearchResult {
+  id: string
+  content: string
+  createdAt: string
+  metadata?: Record<string, unknown>
+}
+
+export interface FileSearchResult {
+  id: string
+  fileId: string
+  fileName: string
+  storagePath?: string
+  content: string
+  createdAt: string
+  chunkIndex?: number
+}
+
+export interface ChatSearchResult {
+  id: string
+  role: "user" | "assistant"
+  content: string
+  createdAt: string
+  messageId?: string  // For deep linking to specific message
+}
+
+export interface SmartInboxSearchResult {
+  id: string
+  type: string
+  content: string
+  isRead: boolean
+  createdAt: string
+  notificationId?: string  // For deep linking to specific notification
+}
+
+export interface GlobalSearchResponse {
+  query: string
+  results: {
+    memories: MemorySearchResult[]
+    files: FileSearchResult[]
+    smartInbox: SmartInboxSearchResult[]
+    chats: ChatSearchResult[]
+  }
+}
+
 // Error Types
 export interface ApiError {
   message: string

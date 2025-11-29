@@ -52,7 +52,7 @@ export default function LoginPage() {
   useEffect(() => {
     setMounted(true)
     if (user) {
-      router.push("/")
+      router.push("/chat")
     }
   }, [user, router])
 
